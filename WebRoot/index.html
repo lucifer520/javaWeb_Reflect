@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>index.html</title>
+    <meta charset="UTF-8">
+    <meta http-equiv="keywords" content="keyword1,keyword2,keyword3">
+    <meta http-equiv="description" content="this is my page">
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+
+    <script type="text/javascript" src="js/jquery 2.1.1.min.js"></script>
+    <script type="text/javascript" src="js/stringFormat.js"></script>
+    <script type="text/javascript" src="js/sweet-alert.min.js"></script>
+  </head>
+  <body>
+    <table class="table table-hover table-striped table-bordered">
+   <caption class="jumbotron alert-info" >学生信息</caption>
+   <thead>
+      <tr>
+         <th>学号</th>
+         <th>姓名</th>
+         <th>年龄</th>
+         <th>性别</th>
+         <th>操作</th>
+      </tr>
+   </thead>
+   <tbody class="tables">
+      <tr>
+         <td>{sno}</td>
+         <td>{sname}</td>
+         <td>{sage}</td>
+         <td>{ssex}</td>
+         <td><button type="button" class="btn btn-primary btn-xs">修改</button>      <button type="button" class="btn btn-primary btn-xs btn-danger">删除</button></td>
+      </tr>
+   </tbody>
+</table>
+<thead><tr><button type="button" class="btn btn-default zenjia">增加学生信息</button></th></thead>
+<div id="HBox1">
+			<form action="add" method="post" >
+				<ul class="list" style="list-style-type:none;  color: #000;">
+					<li>
+						<strong>学号 <font color="#ff0000">*</font></strong>
+						<div class="fl"><input type="text" name="student.sno" value="" class="ipt nickname" /></div>
+					</li>
+					<li>
+						<strong>姓名<font color="#ff0000">*</font></strong>
+						<div class="fl"><input type="text" name="student.sname" value="" class="ipt phone" /></div>
+					</li>
+					<li>
+						<strong>年龄 <font color="#ff0000">*</font></strong>
+						<div class="fl"><input type="text" name="student.sage" value="" class="ipt email" /></div>
+					</li>
+					<li>
+						<strong>性 别 <font color="#ff0000">&nbsp;</font></strong>
+						<div class="fl">
+							<label class="mr10"><input type="radio" name="student.ssex" value="男"/>男</label>
+							<label class="mr10"><input type="radio" name="student.ssex" value="女"/>女</label>
+						</div>
+					</li>
+					<li><input type="submit" value="确认提交" class="submitBtn" /></li>
+				</ul>
+			</form>
+		</div><!-- HBox end -->	
+		
+		<div id="HBox" style="z-index:10000;">
+			<form action="update" method="post" >
+				<ul class="list" style="list-style-type:none;  color: #000;">
+					<li>
+						<strong>学号 <font color="#ff0000">*</font></strong>
+						<div class="fl"><input type="text" name="student.sno" value="" class="ipt nickname" /></div>
+					</li>
+					<li>
+						<strong>姓名<font color="#ff0000">*</font></strong>
+						<div class="fl"><input type="text" name="student.sname" value="" class="ipt phone" /></div>
+					</li>
+					<li>
+						<strong>年龄 <font color="#ff0000">*</font></strong>
+						<div class="fl"><input type="text" name="student.sage" value="" class="ipt email" /></div>
+					</li>
+					<li>
+						<strong>性 别 <font color="#ff0000">&nbsp;</font></strong>
+						<div class="fl">
+							<label class="mr10"><input type="radio" name="student.ssex" value="男"/>男</label>
+							<label class="mr10"><input type="radio" name="student.ssex" value="女"/>女</label>
+						</div>
+					</li>
+					<li><input type="submit" value="确认提交" class="submitBtn" /></li>
+				</ul>
+			</form>
+		</div><!-- HBox end -->	
+ <script type="text/javascript" src="js/jquery.hDialog.min.js"></script>
+  </body>
+  <script type="text/javascript">
+  $(function(){
+    $(".zenjia").hDialog({box: '#HBox1'}); //默认调用弹框；
+    loadshu();
+  });
+  
+  var loadshu = function(){
+  		 var model = "<tr><td>{sno}</td><td>{sname}</td><td>{sage}</td><td>{ssex}</td><td><button type=\"button\" class=\"btn btn-primary btn-xs\" id=\"xiugai\">修改</button>          <button type=\"button\" class=\"btn btn-primary btn-xs btn-danger \" onclick=\"copyText('{sno}','{sname}',{sage},'{ssex}')\"  >删除</button></td></tr>";
+     var param={};
+     var callback=function(data){
+        var sno="";
+        var sname="";
+        var sage=0;
+        var ssex="";
+        var tr;
+        var table = $(".tables");
+        table.html("");
+        $.each(data,function(key,value){
+           sno = value.sno;
+           sname = value.sname;
+           sage = value.sage;
+           ssex = value.ssex;
+           tr = model.format({"sno":sno,"sname":sname,"sage":sage,"ssex":ssex});
+           table.append(tr);
+        });
+         $("#xiugai").hDialog(); //自定义弹框容器ID/Class；
+     };
+     //初始化数据
+     $.manguesAjax("query",param,callback);
+     
+    
+     
+  }
+  
+  
+  
+  
+   var copyText = function(sno,sname,sage,ssex){
+   
+          swal({   title: "确定删除?",   text: "你将要删除这行数据!",   type: "warning",   showCancelButton: true,   confirmButtonColor: "#DD6B55",   confirmButtonText: "删了!",   closeOnConfirm: false }, 
+          
+          function(){   
+           
+           var callback =function(data){
+               swal("已删!", "这行数据已删.", "success"); 
+               loadshu();
+           };
+           var param={"student.sno":sno,"student.sname":sname,"student.sage":sage,"student.ssex":ssex};
+           $.manguesAjax("remove",param,callback);
+          });
+   
+         
+     }
+  jQuery.manguesAjax = function(url,data,callback){
+     console.log(data);
+	 $.ajax({
+		        url: url,
+                type: "POST",
+                data:data,
+                dataType: "json",
+                success: function(data) {
+                  callback(data);
+                },
+                error:function(data){
+                	
+                }
+            });
+ };  
+  </script>
+      <link href="css/animate.min.css" rel="stylesheet">
+      <link href="css/common.css" rel="stylesheet">
+      <link href="css/sweet-alert.css" rel="stylesheet">
+</html>
